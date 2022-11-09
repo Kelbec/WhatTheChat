@@ -9,6 +9,8 @@ userRouter.use((req, res, next) => {
     next()
 })
 
+userController.initUserPub()
+
 userRouter.get('/')
 userRouter.post('/join', userController.joinChat)
 userRouter.get('/list', userController.getUsers)

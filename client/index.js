@@ -1,8 +1,9 @@
 const redis = require('redis');
 
 (async () => {
-
-  const client = redis.createClient({url:'redis://default:redispw@localhost:55001'});
+  require('dotenv').config({path:__dirname+'/../process.dev.env'})
+  
+  const client = redis.createClient({url:process.env.REDIS_URI});
 
   const subscriber = client.duplicate();
 

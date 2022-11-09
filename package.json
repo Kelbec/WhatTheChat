@@ -4,7 +4,10 @@
   "description": "Simple chat app",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start:server": "node dist/app.js",
+    "start:client": "node client/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,10 +21,10 @@
   },
   "homepage": "https://github.com/Kelbec/WhatTheChat#readme",
   "dependencies": {
-    "@socket.io/redis-adapter": "^7.2.0",
     "@types/body-parser": "^1.19.2",
     "@types/node": "^18.11.9",
     "body-parser": "^1.20.1",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "expressjs": "^1.0.1",
     "http-server": "^14.1.1",

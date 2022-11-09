@@ -1,11 +1,7 @@
 import express from 'express'
-//import { setRoomClient } from './controllers/room.controllers'
-// const room_router = require("./routes/room.routes")
-import { createClient, RedisClientType } from 'redis'
 import { userRouter } from './routes/user.routes'
 import { messageRouter } from './routes/message.routes'
 import { Server } from "socket.io";
-import { createAdapter } from "@socket.io/redis-adapter";
 
 let io = new Server()
 

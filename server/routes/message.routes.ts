@@ -9,6 +9,8 @@ messageRouter.use((req, res, next) => {
     next()
 })
 
+messageController.initMessagePub()
+
 messageRouter.get('/', messageController.getMessages)
 messageRouter.post('/send', messageController.sendMessage);
 messageRouter.delete('/delete', messageController.deleteMessages);

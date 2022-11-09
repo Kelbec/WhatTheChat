@@ -1,14 +1,12 @@
-import { RedisClientType } from "@redis/client";
 import { createClient } from "redis";
+import { CONFIG } from '../utils/config.utils';
+import { RedisClientType } from "@redis/client";
 
+// TODO: abtract Controller
 export class MessageController{
-	client = createClient({url:'redis://default:redispw@localhost:55001'})  //TODO: from env file
-	publisher = createClient({url:'redis://default:redispw@localhost:55001'})  //TODO: from env file
+	client: RedisClientType = createClient({url:CONFIG.get("REDIS_URI")})
+	publisher: RedisClientType = createClient({url:CONFIG.get("REDIS_URI")})
 	messages: Message[] = []
-
-	constructor(){
-		this.publisher.connect()
-	}
 
 	sendMessage = async (req, res) => {
 		console.log(req.body)
@@ -19,11 +17,12 @@ export class MessageController{
 			if(cachedUsers){
 				let cachedUsersParsed = JSON.parse(cachedUsers)
 				let foundUser = false
-				for (let i=0; i<cachedUsersParsed.length; i++ ){
-					console.log(cachedUsersParsed[i].userId)
-					if(cachedUsersParsed[i].userId === message.userId){
+				for (const element of cachedUsersParsed){
+					console.log(element.userId)
+					if(element.userId === message.userId){
 						foundUser = true
 					}
+					console.log(foundUser)
 				}
 				if(!foundUser){
 					await this.client.quit()
@@ -91,5 +90,14 @@ export class MessageController{
 		}
 		
 		await this.client.quit()
+	}
+
+	async initMessagePub(){
+		try {
+			await this.publisher.connect()
+		} catch (error) {
+			console.log("ERROR CONNECTING TO ",CONFIG.get("REDIS_URI"))
+			console.log(error)
+		}
 	}
 }

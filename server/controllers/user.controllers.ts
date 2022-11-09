@@ -1,14 +1,13 @@
-import { RedisClientType } from "@redis/client";
+
 import { createClient } from "redis";
+import { CONFIG } from '../utils/config.utils';
+import { RedisClientType } from "@redis/client";
 
+// TODO: abstract Controller
 export class UserController{
-	client = createClient({url:'redis://default:redispw@localhost:55001'})  //TODO: from env file
-	publisher = createClient({url:'redis://default:redispw@localhost:55001'})  //TODO: from env file
+	client: RedisClientType = createClient({url:CONFIG.get("REDIS_URI")})
+	publisher: RedisClientType = createClient({url:CONFIG.get("REDIS_URI")})
 	users: User[] = []
-
-	constructor(){
-		this.publisher.connect()
-	}
 
 	joinChat = async (req, res) => {
 		console.log(req.body)
@@ -18,8 +17,8 @@ export class UserController{
 			let cachedUsers = await this.client.get('users')
 			if(cachedUsers){
 				let cachedUsersParsed = JSON.parse(cachedUsers)
-				for (let i=0; i<cachedUsersParsed.length; i++ ){
-					if(cachedUsersParsed[i].userId === user.userId){
+				for (const element of cachedUsersParsed){
+					if(element.userId === user.userId){
 						await this.client.quit()
 						res.status(400).json({
 							message: "User already existing.",
@@ -55,7 +54,8 @@ export class UserController{
 
 	deleteUsers = async (req, res) => {
 		await this.client.connect()
-		let result = await this.client.del('messages');
+		let result = await this.client.del('users');
+		console.log(result)
 		await this.client.quit()
 		
 		this.users = []
@@ -78,5 +78,14 @@ export class UserController{
 		}
 		
 		await this.client.quit()
+	}
+
+	async initUserPub(){
+		try {
+			await this.publisher.connect()
+		} catch (error) {
+			console.log("ERROR CONNECTING TO ",CONFIG.get("REDIS_URI"))
+			console.log(error)
+		}
 	}
 }
